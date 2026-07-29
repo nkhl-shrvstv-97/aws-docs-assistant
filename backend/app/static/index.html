@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Docs Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f111a;
+            --card-bg: rgba(22, 28, 45, 0.45);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary: #f59e0b;
+            --primary-glow: rgba(245, 158, 11, 0.4);
+            --secondary: #ec4899;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --bubble-user: rgba(245, 158, 11, 0.15);
+            --bubble-assistant: rgba(255, 255, 255, 0.05);
+            --font-family: 'Plus Jakarta Sans', sans-serif;
+            --font-header: 'Outfit', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(236, 72, 153, 0.15) 0px, transparent 50%),
+                radial-gradient(at 90% 80%, rgba(245, 158, 11, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 90vw;
+            max-width: 1000px;
+            height: 90vh;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Header styling */
+        header {
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 17, 26, 0.5);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #fff;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .logo-text h1 {
+            font-family: var(--font-header);
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        button.btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button.btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
+        }
+
+        button.btn-end {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.05));
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+        }
+
+        button.btn-end:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Chat feed */
+        .chat-feed {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-feed::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-feed::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-feed::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 16px 20px;
+            border-radius: 16px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .message-user {
+            align-self: flex-end;
+            background: var(--bubble-user);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.05);
+        }
+
+        .message-assistant {
+            align-self: flex-start;
+            background: var(--bubble-assistant);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .message p {
+            margin-bottom: 8px;
+        }
+
+        .message p:last-child {
+            margin-bottom: 0;
+        }
+
+        .message-citations {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+        }
+
+        .citation-tag {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            padding: 4px 8px;
+            border-radius: 6px;
+            color: var(--primary);
+            text-decoration: none;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .citation-tag:hover {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--primary);
+        }
+
+        /* Message input area */
+        .input-area {
+            padding: 24px 32px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(15, 17, 26, 0.4);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 4px 6px;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .input-wrapper input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-main);
+            padding: 14px 20px;
+            font-family: var(--font-family);
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-send {
+            background: var(--primary);
+            border: none;
+            color: #000;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px var(--primary-glow);
+        }
+
+        .btn-send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px var(--primary-glow);
+        }
+
+        .btn-send svg {
+            width: 18px;
+            height: 18px;
+            fill: #0f111a;
+            transform: translateX(1px);
+        }
+
+        /* Modal Summary Overlay */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 17, 26, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: #161c2d;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 24px;
+        }
+
+        .modal h2 {
+            font-family: var(--font-header);
+            margin-bottom: 12px;
+        }
+
+        .modal p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-logo">
+            <div class="logo-icon">A</div>
+            <div class="logo-text">
+                <h1>AWS Docs Assistant</h1>
+                <p>AI solutions agent & chat partner</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-end" onclick="endSession()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10"/></svg>
+                End Session
+            </button>
+        </div>
+    </header>
+
+    <div class="chat-feed" id="chatFeed">
+        <div class="message message-assistant">
+            Hello! I am your AWS Docs Assistant. Ask me anything about AWS services, VPCs, architectures, or configurations.
+        </div>
+    </div>
+
+    <div class="input-area">
+        <div class="input-wrapper">
+            <input type="text" id="userInput" placeholder="Ask about AWS configurations..." onkeypress="handleKeyPress(event)">
+            <button class="btn-send" onclick="sendMessage()">
+                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Overlay for Session Summary -->
+<div class="modal" id="summaryModal">
+    <div class="modal-content">
+        <div class="modal-icon">✓</div>
+        <h2>Session Summarized</h2>
+        <p id="summaryText">Summarizing chat conversation...</p>
+        <button class="btn" style="width: 100%; justify-content: center; background: var(--primary); color: #000; border: none;" onclick="closeModal()">Close Window</button>
+    </div>
+</div>
+
+<script>
+    const sessionId = 'web-session-' + Math.random().toString(36).substring(2, 15);
+    const chatFeed = document.getElementById('chatFeed');
+    const userInput = document.getElementById('userInput');
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    async function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        // Append user bubble
+        appendBubble(text, 'user');
+        userInput.value = '';
+
+        // Append assistant loading placeholder
+        const loadingId = appendBubble('Thinking...', 'assistant loading');
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    prompt: text,
+                    thread_id: sessionId
+                })
+            });
+
+            const data = await response.json();
+            
+            // Remove loading bubble
+            document.getElementById(loadingId).remove();
+
+            // Append assistant response
+            appendBubble(data.response, 'assistant', data.sources);
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById(loadingId).innerText = 'Error communicating with assistant backend.';
+        }
+    }
+
+    function appendBubble(content, sender, sources = []) {
+        const bubble = document.createElement('div');
+        const id = 'msg-' + Math.random().toString(36).substring(2, 9);
+        bubble.id = id;
+        bubble.className = `message message-${sender}`;
+        
+        let html = `<p>${content.replace(/\n/g, '<br>')}</p>`;
+        
+        if (sources && sources.length > 0) {
+            html += `<div class="message-citations"><strong>Sources:</strong><br>`;
+            sources.forEach(src => {
+                html += `<a href="${src.url}" target="_blank" class="citation-tag">${src.title || 'AWS Doc'}</a>`;
+            });
+            html += `</div>`;
+        }
+
+        bubble.innerHTML = html;
+        chatFeed.appendChild(bubble);
+        chatFeed.scrollTop = chatFeed.scrollHeight;
+
+        return id;
+    }
+
+    async function endSession() {
+        try {
+            const modal = document.getElementById('summaryModal');
+            const summaryText = document.getElementById('summaryText');
+            summaryText.innerText = 'Closing conversation and saving history summary...';
+            modal.classList.add('active');
+
+            const response = await fetch('/api/end-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    thread_id: sessionId
+                })
+            });
+
+            const data = await response.json();
+            summaryText.innerText = data.summary || data.message;
+        } catch (error) {
+            console.error(error);
+            document.getElementById('summaryText').innerText = 'Could not generate summary.';
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('summaryModal').classList.remove('active');
+        // Reset chat
+        chatFeed.innerHTML = '<div class="message message-assistant">Hello! I am your AWS Docs Assistant. Ask me anything about AWS services, VPCs, architectures, or configurations.</div>';
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+[
+  {
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-bucket.html",
+    "service": "AmazonS3"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html",
+    "service": "AmazonS3"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html",
+    "service": "AmazonEC2"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html",
+    "service": "AmazonRDS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html",
+    "service": "AmazonBedrock"
+  }
+]
