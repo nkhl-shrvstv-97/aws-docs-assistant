@@ -9,7 +9,7 @@ class DocumentChunk(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()"))
     content = Column(Text, nullable=False)
-    embedding = Column(Vector(1536))
+    embedding = Column(Vector(1024))
     source_url = Column(Text, nullable=False)
     title = Column(Text, nullable=False)
     service_name = Column(String(100))
@@ -22,5 +22,5 @@ class SessionSummary(Base):
     session_id = Column(String(100), unique=True, nullable=False)
     summary = Column(Text, nullable=False)
     topics = Column(ARRAY(String(255)), nullable=False)
-    embedding = Column(Vector(1536))
+    embedding = Column(Vector(1024))
     created_at = Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))

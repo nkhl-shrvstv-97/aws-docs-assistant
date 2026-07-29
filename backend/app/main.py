@@ -23,6 +23,12 @@ app.add_middleware(
 # Include Routers
 app.include_router(chat.router, prefix="/api", tags=["chat"])
 
+from backend.app.db.init_db import init_database
+
+@app.on_event("startup")
+def on_startup():
+    init_database()
+
 @app.get("/", response_class=HTMLResponse)
 def read_root():
     static_file_path = os.path.join(os.path.dirname(__file__), "static", "index.html")

@@ -32,7 +32,7 @@ def get_db_connection_url():
         password = secret["password"]
         host = secret["host"]
         port = secret.get("port", 5432)
-        dbname = secret.get("dbInstanceIdentifier", secret.get("dbname", "aws_docs"))
+        dbname = secret.get("dbname", secret.get("dbInstanceIdentifier", "aws_docs"))
         
         # Escape credentials properly
         password_escaped = urllib.parse.quote_plus(password)
@@ -60,7 +60,7 @@ def get_embedding(text_content: str) -> list:
     """
     payload = {
         "inputText": text_content,
-        "dimensions": 1536,
+        "dimensions": 1024,
         "normalize": True
     }
     
@@ -133,7 +133,7 @@ def lambda_handler(event, context):
                     
                     sql = text("""
                         INSERT INTO document_chunks (content, embedding, source_url, title, service_name)
-                        VALUES (:content, :embedding::vector, :source_url, :title, :service_name)
+                        VALUES (:content, CAST(:embedding AS vector), :source_url, :title, :service_name)
                     """)
                     
                     db.execute(sql, {

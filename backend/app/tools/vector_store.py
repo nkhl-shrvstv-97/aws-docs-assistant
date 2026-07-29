@@ -17,7 +17,7 @@ def get_embedding(text_content: str) -> list:
     """
     payload = {
         "inputText": text_content,
-        "dimensions": 1536,
+        "dimensions": 1024,
         "normalize": True
     }
     

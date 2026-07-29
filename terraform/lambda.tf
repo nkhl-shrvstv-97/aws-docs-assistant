@@ -20,6 +20,19 @@ data "archive_file" "lambda_zip" {
   }
 }
 
+data "archive_file" "lambda_layer" {
+  type        = "zip"
+  source_dir  = "${path.module}/lambda_layer"
+  output_path = "${path.module}/lambda_layer.zip"
+}
+
+resource "aws_lambda_layer_version" "ingest_dependencies" {
+  filename            = data.archive_file.lambda_layer.output_path
+  source_code_hash    = data.archive_file.lambda_layer.output_base64sha256
+  layer_name          = "${var.project_name}-ingest-deps"
+  compatible_runtimes = ["python3.12"]
+}
+
 resource "aws_lambda_function" "ingest_worker" {
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
@@ -27,8 +40,10 @@ resource "aws_lambda_function" "ingest_worker" {
   role             = aws_iam_role.lambda_ingest.arn
   handler          = "backend.ingestion.lambda_function.lambda_handler"
   runtime          = "python3.12"
+  architectures    = ["arm64"]
   timeout          = 60
   memory_size      = 512
+  layers           = [aws_lambda_layer_version.ingest_dependencies.arn]
 
   vpc_config {
     subnet_ids         = [aws_subnet.private_1.id, aws_subnet.private_2.id]
@@ -39,7 +54,6 @@ resource "aws_lambda_function" "ingest_worker" {
     variables = {
       DB_SECRET_ARN    = aws_secretsmanager_secret.db_credentials.arn
       AWS_REGION_NAME  = var.aws_region
-      PYTHONPATH       = "/var/task"
     }
   }
 

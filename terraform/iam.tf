@@ -54,6 +54,15 @@ resource "aws_iam_policy" "lambda_custom" {
           aws_s3_bucket.docs_landing.arn,
           "${aws_s3_bucket.docs_landing.arn}/*"
         ]
+      },
+      {
+        Effect   = "Allow"
+        Action   = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ]
+        Resource = [aws_sqs_queue.s3_events.arn]
       }
     ]
   })

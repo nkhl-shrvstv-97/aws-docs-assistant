@@ -47,8 +47,10 @@ resource "aws_apprunner_service" "backend" {
       image_configuration {
         port = "8000"
         runtime_environment_variables = {
-          AWS_REGION   = var.aws_region
-          DATABASE_URL = "postgresql://${var.db_username}:${random_password.db_password.result}@${aws_db_instance.postgres.endpoint}/${var.db_name}"
+          AWS_REGION                = var.aws_region
+          DATABASE_URL              = "postgresql://${var.db_username}:${random_password.db_password.result}@${aws_db_instance.postgres.endpoint}/${var.db_name}"
+          BEDROCK_GENERATE_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
+          BEDROCK_CLASSIFY_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
         }
       }
     }
@@ -64,6 +66,15 @@ resource "aws_apprunner_service" "backend" {
 
   instance_configuration {
     instance_role_arn = aws_iam_role.apprunner_instance.arn
+  }
+
+  health_check_configuration {
+    protocol            = "HTTP"
+    path                = "/health"
+    interval            = 10
+    timeout             = 5
+    healthy_threshold   = 1
+    unhealthy_threshold = 5
   }
 
   tags = {
