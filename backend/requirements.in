@@ -1,0 +1,15 @@
+fastapi
+pydantic-settings
+sqlalchemy
+pgvector
+psycopg2-binary
+requests
+beautifulsoup4
+markdownify
+langchain-text-splitters
+boto3
+pytest
+langgraph
+langchain-aws
+slowapi
+
