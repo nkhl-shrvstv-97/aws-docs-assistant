@@ -1,5 +1,5 @@
 import json
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_aws import ChatBedrock
@@ -8,8 +8,11 @@ from backend.app.config import settings
 from backend.app.db.session import SessionLocal
 from backend.app.db.models import SessionSummary
 from backend.app.tools.vector_store import get_embedding
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 router = APIRouter()
+limiter = Limiter(key_func=get_remote_address)
 
 class ChatRequest(BaseModel):
     prompt: str
@@ -29,15 +32,16 @@ class EndSessionResponse(BaseModel):
     summary: str
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat_endpoint(request: ChatRequest):
+@limiter.limit("30/minute")
+async def chat_endpoint(request: Request, chat_request: ChatRequest):
     """
-    Endpoint to send message to the RAG Agent.
+    Endpoint to send message to the RAG Agent with a rate limit of 30 requests/min.
     """
-    config = {"configurable": {"thread_id": request.thread_id}}
+    config = {"configurable": {"thread_id": chat_request.thread_id}}
     
     try:
         initial_state = {
-            "messages": [HumanMessage(content=request.prompt)],
+            "messages": [HumanMessage(content=chat_request.prompt)],
             "loop_count": 0
         }
         

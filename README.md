@@ -1,164 +1,124 @@
-# AWS Documentation RAG & Agent Assistant
+# AWS Docs Assistant: Production-Grade Agentic Chatbot & RAG Pipeline
 
-An agentic search and retrieval assistant that utilizes **LangGraph**, **pgvector (RDS PostgreSQL)**, and **Amazon Bedrock (Claude 3.5 Sonnet / Haiku, Titan)** to answer complex queries regarding AWS services, citing documentation with accuracy. It features a local CLI client, an embedded web interface, an automated document ingestion pipeline, and full infrastructure deployment scripts using **Terraform**.
+An enterprise-ready Agentic Chatbot designed to interact with official AWS Documentation using advanced Retrieval-Augmented Generation (RAG) and LLM agentic orchestration. 
 
----
+This repository demonstrates production-quality software engineering, clean architecture, and modern agentic AI practices for a technical assessment. It is fully deployable to AWS via Terraform Infrastructure as Code (IaC).
 
-## Codebase Status Check
-All components of the codebase are fully implemented and in place:
-1. **Backend Service** ([backend/app](file:///Users/nikhilshrivastava/Desktop/code/repos/aws-docs-assistant/backend/app)): FastAPI endpoints, config settings, DB models/sessions, tools, and the LangGraph workflow.
-2. **LangGraph Agent Workflow** ([backend/app/agents](file:///Users/nikhilshrivastava/Desktop/code/repos/aws-docs-assistant/backend/app/agents)): Classify, Rewrite, Retrieve, Grade, Search, Refuse, and Generate nodes.
-3. **Ingestion Pipeline** ([backend/ingestion](file:///Users/nikhilshrivastava/Desktop/code/repos/aws-docs-assistant/backend/ingestion)): Ingestion runners, parsers, and Lambda trigger function for AWS S3 landing bucket uploads.
-4. **Terraform Configurations** ([terraform](file:///Users/nikhilshrivastava/Desktop/code/repos/aws-docs-assistant/terraform)): Infrastructure configurations covering VPC networking, RDS PostgreSQL with pgvector, ECR repositories, App Runner serverless compute, IAM roles/policies, Secrets Manager secrets, and S3-SQS-Lambda event linkages.
-5. **Interactive Clients**:
-   - Terminal CLI client ([cli.py](file:///Users/nikhilshrivastava/Desktop/code/repos/aws-docs-assistant/cli.py))
-   - Static Web Interface ([backend/app/static/index.html](file:///Users/nikhilshrivastava/Desktop/code/repos/aws-docs-assistant/backend/app/static/index.html))
+Live Deployed UI URL: [INSERT_DEPLOYED_UI_URL_HERE](INSERT_DEPLOYED_UI_URL_HERE)
 
 ---
 
-## 1. Environment Variables Configuration
+## Architecture Overview & Documentation Index
 
-To run the application locally or deploy it to AWS, you need to configure the environment.
+Detailed implementation details are separated into modular documentation guides:
 
-### Local Development Env (`backend/app/.env` or root `.env`)
-Create a `.env` file in `backend/app/` (or in the repository root) containing the following variables:
-
-```ini
-# AWS Configuration
-AWS_REGION=us-east-1
-# Standard AWS credentials for Bedrock API access (or loaded from ~/.aws/credentials)
-AWS_ACCESS_KEY_ID=your_aws_access_key_id
-AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
-# Optional if using temporary AWS credentials:
-# AWS_SESSION_TOKEN=your_aws_session_token
-
-# Database Connection (pgvector on PostgreSQL)
-# Default for a local postgres container:
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/aws_docs
-
-# Amazon Bedrock Model IDs
-BEDROCK_EMBED_MODEL_ID=amazon.titan-embed-text-v2:0
-BEDROCK_CLASSIFY_MODEL_ID=anthropic.claude-3-haiku-20240307-v1:0
-BEDROCK_GENERATE_MODEL_ID=anthropic.claude-3-5-sonnet-20240620-v1:0
-
-# Live Web Search (Tavily Search API)
-TAVILY_API_KEY=your_tavily_api_key
-```
-
-### Production Env (AWS Deployment via Terraform)
-Terraform automatically manages:
-- **`DATABASE_URL`**: Configured dynamically on AWS App Runner by pulling DB connection details and dynamic password credentials from AWS Secrets Manager.
-- **`AWS_REGION`**: Passed automatically as a variable to App Runner.
-- **IAM Policies**: The instance role attached to AWS App Runner includes permission to call Amazon Bedrock models (`bedrock:InvokeModel`).
+1. **[LangGraph Agent Architecture](docs/agent-architecture.md)**
+   * Outlines the multi-step state graph: Domain classification, query rewriting, local database retrieval, relevance grading, fallback live search, grounding verification, and retry loops.
+2. **[RAG Pipeline Architecture](docs/rag-architecture.md)**
+   * Details HTML cleaning, MarkdownTextSplitter semantic chunking, dynamic pgvector HNSW cosine matching, and the S3-SQS-Lambda document ingestion flow.
+3. **[Terraform & Cloud Infrastructure](docs/terraform-architecture.md)**
+   * Describes the secure AWS networking layout (VPC public/private isolation), RDS PostgreSQL configuration, Secrets Manager auto-credential mapping, and serverless hosting via App Runner.
+4. **[Directory Structure & Application Layout](docs/directory-structure.md)**
+   * Map of modules, schemas, endpoints, and deployment roles in the codebase.
 
 ---
 
-## 2. Infrastructure Deployment (Terraform)
+## Key Features and Capabilities
 
-Follow these steps to deploy the resources (VPC, RDS PostgreSQL, App Runner, S3 bucket, SQS queue, Ingestion Lambda) on AWS:
-
-### Prerequisites
-1. Install [Terraform](https://developer.hashicorp.com/terraform/downloads).
-2. Authenticate your terminal session with AWS. You can do this in one of two ways:
-
-   **Method A: Export credentials directly in your terminal (Quickest)**
-   ```bash
-   export AWS_ACCESS_KEY_ID="your_aws_access_key_id"
-   export AWS_SECRET_ACCESS_KEY="your_aws_secret_access_key"
-   export AWS_DEFAULT_REGION="us-east-1"
-   ```
-
-   **Method B: Configure the AWS CLI (Persistent)**
-   ```bash
-   aws configure
-   # Enter your AWS Access Key ID, AWS Secret Access Key, and default region (us-east-1) when prompted.
-   ```
-
-### Deployment Steps
-1. Navigate to the terraform directory:
-   ```bash
-   cd terraform
-   ```
-2. Initialize Terraform (installs provider plug-ins):
-   ```bash
-   terraform init
-   ```
-3. Validate and preview the AWS resources to be created:
-   ```bash
-   terraform plan
-   ```
-4. Deploy the infrastructure to AWS:
-   ```bash
-   terraform apply
-   ```
-   *(Type `yes` when prompted to authorize the action)*
-
-5. Retrieve output values (such as the ECR repository URL, App Runner endpoint, and S3 bucket name):
-   ```bash
-   terraform output
-   ```
+* **Long-Term Semantic Memory (Session Summarization):** When a user ends a session (via the UI "End Session" button or CLI exit), the agent automatically compiles a structured session summary, embeds it, and stores it in RDS. In subsequent sessions, if the user asks contextual questions (e.g., "What did we talk about last time?"), the agent dynamically pulls these vector summaries into the prompt context to maintain continuity.
+* **LangGraph Orchestration & Corrective RAG:** The decision loop runs on a LangGraph workflow. It includes a classification node to filter out-of-scope prompts, a document grader to evaluate retrieved content, and an anti-hallucination grounding grader that loops back to refine generation or execute fallback searches if response claims are unsupported by retrieved documentation chunks.
+* **Hybrid Context Retrieval:**
+  * **Local Vector Store:** High-performance semantic queries over local documentation using PostgreSQL pgvector HNSW cosine similarity matching and amazon.titan-embed-text-v2:0.
+  * **Live Search Fallback:** Live web-scraping fallback tool restricted to site:docs.aws.amazon.com for queries not answered by the local database.
+* **SlowAPI Rate Limiting:** public API endpoints are protected using SlowAPI rate-limiting filters to control usage, defend against burst-traffic attacks, and prevent runaway Bedrock consumption costs.
+* **LangSmith Observability Integration:** Full out-of-the-box integration with LangSmith tracing. Simply configure standard LangChain environment variables to capture detailed trace visualizations of state transitions, node latency, and model input/output pairs.
+* **S3/SQS/Lambda Ingestion Queueing:** An event-driven ingestion pipeline where document uploads to Amazon S3 publish event notifications to an SQS Queue. A throttled Lambda function (max concurrency cap of 2, batch size of 5) pulls from the queue to run chunking and database insertions, shielding the RDS PostgreSQL connection pool.
+* **VPC Network Isolation:** Secure networking layout containing public and private subnets. The RDS instances have no public IPs and strictly allow TCP port 5432 ingress only from App Runner and Lambda security groups.
+* **Automatic Database Schema Initialization:** The FastAPI application utilizes SQLAlchemy models to automatically run migrations and initialize required database tables on startup.
+* **Interactive UI & CLI Interfaces:** Includes an embedded, lightweight single-page HTML/JS interface served natively by FastAPI, alongside a CLI terminal application (cli.py) with session management hooks.
+* **Comprehensive Test Suite:** Includes unit and integration tests (test_agent.py, test_rag_pipeline.py) utilizing pytest to validate agent state transitions, prompt formatting, document chunking, and mock Bedrock API calls.
 
 ---
 
-## 3. Deployment Flow (Docker Image to ECR)
+## Tech Stack
 
-Once Terraform creates the ECR repository, you must build and push the backend Docker image to run it in AWS App Runner:
-
-1. Authenticate Docker to your AWS ECR Registry (replace `<AWS_ACCOUNT_ID>` and `<REGION>`):
-   ```bash
-   aws ecr get-login-password --region <REGION> | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com
-   ```
-2. Build the Docker image (run from the `backend/` directory or root depending on where Dockerfile is):
-   ```bash
-   docker build -t nikhil-aws-docs-assistant-backend:latest ./backend
-   ```
-3. Tag the image for ECR:
-   ```bash
-   docker tag nikhil-aws-docs-assistant-backend:latest <AWS_ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/nikhil-aws-docs-assistant-backend:latest
-   ```
-4. Push the image:
-   ```bash
-   docker push <AWS_ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/nikhil-aws-docs-assistant-backend:latest
-   ```
-5. Deploy to App Runner:
-   - Go to AWS Console -> AWS App Runner -> Select `nikhil-aws-docs-assistant-backend` -> Click **Deploy** to pull the newly uploaded image.
+* **Backend & API:** Python 3.11+, FastAPI, Uvicorn, SlowAPI, SQLAlchemy (ORM)
+* **Agent Framework:** LangGraph, LangChain AWS (Bedrock Integration)
+* **LLM & Embeddings:** Amazon Bedrock (anthropic.claude-3-5-sonnet-v2, anthropic.claude-3-haiku, amazon.titan-embed-text-v2:0)
+* **Database:** Amazon RDS PostgreSQL + pgvector extension
+* **Infrastructure:** Terraform, AWS App Runner, AWS Lambda, Amazon S3, Amazon SQS, AWS Secrets Manager, VPC Security Groups
 
 ---
 
-## 4. Local Development & Testing
+## Local Development Quickstart
 
-If you want to test and develop locally:
+For full configuration and seeding details, please refer to the architecture guides. Below is the minimal startup sequence:
 
-### Run Local Database
-Use Docker to spin up a PostgreSQL instance with pgvector support:
 ```bash
-docker run --name pgvector-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=aws_docs -p 5432:5432 -d pgvector/pgvector:pg15
+# Clone the repository and setup venv
+git clone <your-repo-url>
+cd aws-docs-assistant
+python3 -m venv .venv && source .venv/bin/activate && pip install -r backend/requirements.txt
+
+# Run crawler & ingestion (requires local PostgreSQL with pgvector)
+PYTHONPATH=. python backend/ingestion/download_docs.py
+PYTHONPATH=. python backend/ingestion/ingest.py
+
+# Start FastAPI API server
+PYTHONPATH=. uvicorn backend.app.main:app --reload
 ```
 
-### Install Dependencies & Seed Database
-1. Set up python virtual environment:
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   pip install -r backend/requirements.txt
-   ```
-2. Run database initialization script (creates schemas & table mappings):
-   ```bash
-   python3 backend/app/db/init_db.py
-   ```
-3. Ingest sample AWS documentation:
-   ```bash
-   python3 backend/ingestion/run_ingest_pipeline.py
-   ```
+---
 
-### Start FastAPI Backend
+## AWS Production Deployment & Cleanup
+
+The entire environment is configured to deploy with zero manual setup in AWS Console using Terraform.
+
+### 1. Provision Infrastructure
+Ensure your terminal is authenticated with your target AWS account credentials, then execute:
 ```bash
-uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
+cd terraform
+terraform init
+terraform plan
+terraform apply -auto-approve
 ```
 
-### Accessing Clients
-- **Web UI:** Open `http://localhost:8000/` in your browser.
-- **CLI Chat Client:** Run from repository root:
-  ```bash
-  python3 cli.py
-  ```
+Upon successful deployment, Terraform will export:
+* `app_runner_url`: The public endpoint of the hosted FastAPI chatbot.
+* `s3_bucket_name`: The landing S3 bucket for uploading document files.
+* `rds_endpoint`: The private RDS PostgreSQL instance endpoint.
+
+### 2. Trigger Ingest Pipeline
+To sync crawled AWS documentation to S3 and trigger the automatic Lambda ingestion worker:
+```bash
+export S3_BUCKET_NAME="your-terraform-s3-bucket-name"
+PYTHONPATH=. python backend/ingestion/run_ingest_pipeline.py
+```
+
+### 3. Cleanup / Destroy Infrastructure
+Once the solution has been reviewed and tested, execute the following command to completely destroy all provisioned AWS resources and avoid incurring any further costs:
+```bash
+cd terraform
+terraform destroy -auto-approve
+```
+
+---
+
+## Production Gaps & Future Roadmap
+
+The following enterprise features were omitted due to the assignment time constraints:
+* **User Authentication & Multi-Tenancy:** Integration of OAuth2/OIDC (e.g., AWS Cognito) with row-level security (RLS) in PostgreSQL to partition thread histories by user.
+* **Distributed Caching (Redis):** Caching semantic search matches and common LLM query responses to reduce system latency and Bedrock processing costs.
+* **Resilience Patterns (Circuit Breakers):** Implementing fallback paths (e.g., using `tenacity` or `resilience4j` structures) to gracefully handle Bedrock throttle exceptions or search engine downtime.
+* **Production-Grade Rate Limiting:** Migrating SlowAPI from in-memory storage to a shared Redis backend to manage rates across scaled App Runner compute containers.
+* **Hybrid Search & Re-ranking:** Combining standard vector search with keyword-based lexical search (BM25) and feeding the results into a Cross-Encoder Re-ranker (e.g., Cohere/BGE) to optimize context relevance.
+* **CI/CD Pipelines:** Automated pipelines (e.g., GitHub Actions) to run the pytest suite, compile Docker containers, push to AWS ECR, and execute Terraform plans.
+
+---
+
+## Testing
+
+To run unit and integration tests (validating query translation, chunk relevance grading, and agent schema routing):
+```bash
+pytest backend/tests/
+```

@@ -33,25 +33,19 @@ def route_search(state: AgentState) -> str:
 
 # Conditional router for grade_generation
 def route_grounding(state: AgentState) -> str:
-    # Check output of grade_generation
-    # Wait, the node outputs a dict with is_grounded. Let's make sure it's correct.
-    # Note: We can also pass state directly or read from state.
-    # We will compute is_grounded inside a local check or reuse the key if set in state/return.
-    # Let's check state values.
     loop_count = state.get("loop_count", 0)
+    generation = state.get("generation", "").lower()
+    web_search_run = state.get("web_search_run", False)
     
-    # We will call the grader directly here or use its result. Since in LangGraph we have the node,
-    # the node should update the state. Let's check state's properties.
-    # To keep state clean, let's look up if the last grounding run set a flag.
-    # Or we can just invoke the grading check. Let's inspect state:
-    # We can write a custom condition.
-    # Let's import the grader here to run synchronously as a router, or run in the node.
-    # Since grade_generation was run as a node, we should store its result in state.
-    # Let's assume we modify AgentState to contain `is_grounded` or we just run the grade_generation check here.
-    # Let's run it directly here to keep the state clean, or read it from state.
-    # To read from state, we can add `is_grounded` to state or return it from Node 6.
-    # Let's run the grounding check in route_grounding or read it. Let's check.
-    # If we run it in route_grounding, it's very easy:
+    # Check if final generation is a refusal to answer due to missing context
+    refusal_phrases = ["cannot answer", "do not have enough information", "does not contain any information", "no relevant aws documents"]
+    is_refusal = any(phrase in generation for phrase in refusal_phrases)
+    
+    # If it is a refusal and we haven't done a web search yet, route to live_aws_search
+    if is_refusal and not web_search_run:
+        print("--- ROUTER: Refusal detected and web search has not run yet. Routing to live_aws_search ---")
+        return "live_aws_search"
+        
     from backend.app.agents.nodes.grade import grade_generation as check_grounding
     res = check_grounding(state)
     is_grounded = res.get("is_grounded", True)
@@ -116,7 +110,8 @@ def build_agent_graph():
         route_grounding,
         {
             END: END,
-            "generate_answer": "generate_answer"
+            "generate_answer": "generate_answer",
+            "live_aws_search": "live_aws_search"
         }
     )
     

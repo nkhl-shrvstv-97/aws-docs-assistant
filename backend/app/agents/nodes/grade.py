@@ -39,8 +39,7 @@ def grade_documents(state: AgentState) -> dict:
                 filtered_docs.append(doc)
         except Exception as e:
             print(f"Error grading document: {e}")
-            # Keep it in case of errors to be safe
-            filtered_docs.append(doc)
+            # Do not append in case of error to be strict and allow web search fallback
             
     search_needed = len(filtered_docs) == 0
     print(f"Docs after grading: {len(filtered_docs)} / {len(documents)}. Search needed: {search_needed}")

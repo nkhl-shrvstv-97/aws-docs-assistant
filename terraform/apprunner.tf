@@ -51,6 +51,12 @@ resource "aws_apprunner_service" "backend" {
           DATABASE_URL              = "postgresql://${var.db_username}:${random_password.db_password.result}@${aws_db_instance.postgres.endpoint}/${var.db_name}"
           BEDROCK_GENERATE_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
           BEDROCK_CLASSIFY_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
+
+          # LangSmith Tracing
+          LANGCHAIN_TRACING_V2      = var.langsmith_api_key != "" ? "true" : "false"
+          LANGCHAIN_ENDPOINT        = "https://api.smith.langchain.com"
+          LANGCHAIN_API_KEY        = var.langsmith_api_key
+          LANGCHAIN_PROJECT         = var.langsmith_project
         }
       }
     }

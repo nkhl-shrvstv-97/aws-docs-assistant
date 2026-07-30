@@ -12,9 +12,16 @@ def classify_domain(state: AgentState) -> dict:
     print("--- NODE: CLASSIFY DOMAIN ---")
     messages = state.get("messages", [])
     if not messages:
-        return {"is_aws_related": False}
+        return {"is_aws_related": False, "classification": "out_of_scope"}
     
     last_msg = messages[-1].content
+    last_msg_lower = last_msg.lower()
+    
+    # 2. Quick heuristic for clear history/previous chat queries
+    history_triggers = ["what was i talking about", "what did we discuss", "summarize our chat", "previous conversation"]
+    if any(trigger in last_msg_lower for trigger in history_triggers):
+        return {"is_aws_related": True, "classification": "session_history", "loop_count": 0}
+        
     history_str = "\n".join([f"{type(m).__name__}: {m.content}" for m in messages[:-1]])
     
     prompt = CLASSIFY_DOMAIN_PROMPT.format(history=history_str, query=last_msg)
@@ -36,9 +43,11 @@ def classify_domain(state: AgentState) -> dict:
         
         data = json.loads(content)
         is_aws_related = data.get("is_aws_related", True)
+        classification = data.get("classification", "aws_related")
     except Exception as e:
         print(f"Error in classify_domain: {e}")
         # Default to True so we don't refuse valid questions in case of errors
         is_aws_related = True
+        classification = "aws_related"
         
-    return {"is_aws_related": is_aws_related, "loop_count": 0}
+    return {"is_aws_related": is_aws_related, "classification": classification, "loop_count": 0}

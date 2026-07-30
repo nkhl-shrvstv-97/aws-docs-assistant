@@ -18,6 +18,8 @@ class AgentState(TypedDict):
     # Internal routing flags
     search_needed: bool
     is_aws_related: bool
+    classification: str
+    web_search_run: bool
     
     # Guard against infinite loops
     loop_count: int

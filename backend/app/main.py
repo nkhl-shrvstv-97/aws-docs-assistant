@@ -5,11 +5,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from backend.app.routers import chat
 
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
+from backend.app.routers.chat import limiter
+
 app = FastAPI(
     title="AWS Documentation Agentic Chatbot",
     description="FastAPI backend hosting LangGraph RAG Agent for AWS Documentation",
     version="1.0.0"
 )
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Enable CORS for frontend/testing calls
 app.add_middleware(

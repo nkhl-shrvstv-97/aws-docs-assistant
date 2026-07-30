@@ -17,4 +17,4 @@ def live_aws_search(state: AgentState) -> dict:
     all_docs = list(current_docs) + results
     
     print(f"Appended {len(results)} live search documents. Total docs: {len(all_docs)}")
-    return {"documents": all_docs}
+    return {"documents": all_docs, "web_search_run": True}

@@ -157,49 +157,7 @@ To scale this baseline pipeline into an enterprise RAG system, the following arc
 
 ---
 
-## 5. Ingestion Pipeline Implementation Checklist
-
-Use the following step-by-step checklist to implement the RAG ingestion pipeline:
-
-### Phase 1: Local Data Preparation
-- [x] Create `backend/ingestion/seed_urls.json` containing live target AWS Documentation URLs.
-- [x] Create `backend/ingestion/download_docs.py` to:
-  - [x] Fetch live HTML content using `requests`.
-  - [x] Clean HTML structure by decomposing `<script>`, `<style>`, and `<nav>` blocks.
-  - [x] Extract main text from `<div id="main-content">` or `<div id="main-col-body">`.
-  - [x] Convert clean HTML elements to Markdown format using `markdownify`.
-  - [x] Extract metadata (`title`, `url`, `service` name) and prepend it as a YAML frontmatter block.
-  - [x] Save output `.md` files into a local folder: `backend/ingestion/data/`.
-- [x] Run `download_docs.py` to seed the local data corpus.
-
-### Phase 2: Database Setup & Local DB Testing
-- [ ] Spin up a local PostgreSQL container with the `pgvector` extension enabled.
-- [x] Create SQL models (`document_chunks`, `session_summaries`) in `backend/app/db/models.py` using SQLAlchemy.
-- [x] Initialize tables using a database setup migration script.
-
-### Phase 3: Lambda Ingestion Worker Code
-- [x] Create `backend/ingestion/lambda_function.py`.
-- [x] Implement database connector that pulls database credentials securely from AWS Secrets Manager using standard `boto3` client calls.
-- [x] Implement Bedrock Client payload wrapper invoking `amazon.titan-embed-text-v2:0` to return 1536-dimension normalized embedding vectors.
-- [x] Write parsing logic inside the Lambda handler to:
-  - [x] Detect S3 Object Created events from the SQS message body.
-  - [x] Download target `.md` files from S3.
-  - [x] Extract YAML Frontmatter metadata fields.
-  - [x] Partition the markdown body text using `MarkdownTextSplitter` (chunk size: 1000, overlap: 200).
-  - [x] Embed chunks and save records directly to the RDS PostgreSQL database.
-
-### Phase 4: Cloud Provisioning (Terraform)
-- [x] Provision the VPC, private/public subnets, and routing maps.
-- [x] Provision the RDS PostgreSQL instance in the private subnet.
-- [x] Provision the S3 landing bucket and the SQS event buffer queue.
-- [x] Configure S3 Event Notifications to send notifications to SQS.
-- [x] Provision the Lambda Ingestion function within the VPC with an SQS event trigger (configured with max concurrency cap of 2 and batch size of 5 to protect RDS connections).
-- [x] Author IAM Roles granting S3 read access, Bedrock invoke model permissions, Secrets Manager reads, and CloudWatch logs writes.
-- [x] Package and upload the Lambda worker code.
-
----
-
-## 6. How to Trigger the Ingestion Pipeline
+## 5. How to Trigger the Ingestion Pipeline
 
 To run the unified scraper and automatically upload the compiled documents to your AWS S3 landing bucket (which then triggers the SQS and Lambda pipeline), execute the following commands:
 

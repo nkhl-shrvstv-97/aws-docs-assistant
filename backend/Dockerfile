@@ -13,8 +13,9 @@ COPY . ./backend
 # Expose port 8000
 EXPOSE 8000
 
-# Set Python path to find backend modules
+# Set Python path and unbuffered logging
 ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
 
 # Start FastAPI application
 CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]

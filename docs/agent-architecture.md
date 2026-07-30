@@ -13,7 +13,7 @@ graph TD
     Start([START]) --> Classify[0. classify_domain <br/>Cheap Bedrock classifier]
     Classify --> IsAWS{Is AWS Related?}
     
-    IsAWS -->|No| Refuse[A. refuse_out_of_scope <br/>Python Static Response]
+    IsAWS -->|No| Refuse[A. refuse_out_of_scope <br/>Python Response / Greeting Router]
     Refuse --> End([END])
     
     IsAWS -->|Yes| Rewrite[1. rewrite_query <br/>LLM Query Translation]
@@ -42,6 +42,9 @@ graph TD
     LoopCount -->|Yes| Retry[Loop / Re-try Node <br/>feedback state increment]
     Retry --> Generate
     LoopCount -->|No| End
+
+    %% Refusal fallback route to live search
+    Generate -->|Refusal & Web Search Not Run| LiveSearch
 ```
 
 ---
@@ -69,6 +72,8 @@ class AgentState(TypedDict):
     # Internal routing flags
     search_needed: bool
     is_aws_related: bool
+    classification: str
+    web_search_run: bool
     
     # Guard against infinite loops
     loop_count: int
@@ -80,13 +85,13 @@ class AgentState(TypedDict):
 
 ### Node 0: `classify_domain`
 * **Input:** Latest message in `messages`.
-* **Logic:** Employs Claude 3 Haiku via Bedrock to determine if the user query requests information related to AWS services, pricing, architectures, or concepts.
-* **Output:** Sets `is_aws_related` (bool).
+* **Logic:** Employs Claude 3 Haiku via Bedrock to classify the query intent into `"aws_related"`, `"session_history"`, `"conversational"`, or `"out_of_scope"`.
+* **Output:** Sets `is_aws_related` (bool) and `classification` (str).
 
 ### Node A: `refuse_out_of_scope` (Python Node)
-* **Input:** None.
-* **Logic:** Sets a static refusal response directly to `generation`. Bypasses all LLM synthesis nodes.
-* **Output:** Updates `generation` with: *"I'm sorry, I am an AI assistant dedicated to helping with AWS Documentation..."*
+* **Input:** `classification`, `messages`.
+* **Logic:** If `classification` is `"conversational"`, returns a friendly greeting or pleasantry. Otherwise, sets a static out-of-scope refusal response.
+* **Output:** Updates `generation`.
 
 ### Node 1: `rewrite_query`
 * **Input:** `messages`.
@@ -111,7 +116,7 @@ class AgentState(TypedDict):
 ### Node 4: `live_aws_search`
 * **Input:** `standalone_query`.
 * **Logic:** Triggers web search constrained to `docs.aws.amazon.com`, pulls text content from top URLs, chunks them, and appends them to state.
-* **Output:** Appends results to `documents`.
+* **Output:** Appends results to `documents` and sets `web_search_run = True`.
 
 ### Node 5: `generate_answer`
 * **Input:** `documents`, `messages`.
@@ -119,61 +124,8 @@ class AgentState(TypedDict):
 * **Output:** Sets `generation`.
 
 ### Node 6: `grade_generation`
-* **Input:** `generation`, `documents`.
-* **Logic:** Hallucination grading (is the response supported by the retrieved documents?) and Relevance grading (does it address the original user request?).
+* **Input:** `generation`, `documents`, `web_search_run`.
+* **Logic:** Checks for hallucination and relevance. If `generation` is a context refusal message and `web_search_run` is False, routes to `live_aws_search`.
 * **Output:** Dynamic routing decision.
 
 ---
-
-## 4. LangGraph Agent Implementation Checklist
-
-Use this checklist to implement the agentic backend application from scratch:
-
-### Phase 1: Project Setup & Environment Boilerplate
-- [ ] Initialize Python virtual environment and add dependencies to `requirements.txt` (FastAPI, uvicorn, langgraph, langchain-aws, pydantic-settings, psycopg2-binary, pyyaml).
-- [ ] Create `.env` file specifying database connections, search API keys (Tavily/Google), and AWS Bedrock credentials.
-- [ ] Implement `backend/app/config.py` using `pydantic-settings` to load and validate environment variables.
-- [ ] Write the skeleton for `backend/app/main.py` configuring FastAPI, enabling CORS, and setting up lifecycle loaders.
-
-### Phase 2: Agent State & System Prompts
-- [ ] Create `backend/app/agents/state.py` containing the `AgentState` schema.
-- [ ] Create `backend/app/agents/prompts.py` defining system instructions for:
-  - [ ] **Domain Classifier:** Strictly output JSON formatting: `{"is_aws_related": true/false}`.
-  - [ ] **Query Rewriter:** Parse conversational turns into a single standalone search query.
-  - [ ] **Document Grader:** Grade chunks as "yes" or "no" based on query relevance.
-  - [ ] **Answer Generator:** Require strict inline URL citations mapped from document metadata.
-  - [ ] **Grounding Grader:** Binary check verifying if LLM generation statements are anchored to the context.
-
-### Phase 3: Implementing Graph Nodes
-- [ ] **Domain Classifier:** Implement `backend/app/agents/nodes/classify.py` invoking Claude 3 Haiku via `ChatBedrock` matching the classifier prompt.
-- [ ] **Refusal Worker (Python-Only):** Implement `backend/app/agents/nodes/refuse.py` writing the static out-of-scope block to state.
-- [ ] **Query Rewriter:** Implement `backend/app/agents/nodes/rewrite.py` to rewrite history.
-- [ ] **Local Retriever:** Implement `backend/app/agents/nodes/retrieve.py` fetching vector matches from `document_chunks` table.
-- [ ] **Doc Relevance Grader:** Implement `backend/app/agents/nodes/grade.py` to filter documents and dynamically set `search_needed = True`.
-- [ ] **Live AWS Search Tool:** Implement `backend/app/agents/nodes/search.py` using a web search client restricted to `site:docs.aws.amazon.com`.
-- [ ] **Answer Synthesizer:** Implement `backend/app/agents/nodes/generate.py` using Claude 3.5 Sonnet to construct the final response.
-- [ ] **Hallucination Grader:** Add the verification node inside `grade.py` comparing final answer to chunk contents.
-
-### Phase 4: Graph Compilation & Routing
-- [ ] Write `backend/app/agents/graph.py`:
-  - [ ] Initialize `StateGraph(AgentState)`.
-  - [ ] Add all nodes using `graph.add_node()`.
-  - [ ] Define entrypoint `graph.set_entry_point("classify_domain")`.
-  - [ ] Add conditional routing edges:
-    - [ ] `add_conditional_edges("classify_domain", route_domain)` to route to `rewrite_query` or `refuse_out_of_scope`.
-    - [ ] `add_conditional_edges("grade_documents", route_search)` to route to `live_aws_search` or `generate_answer`.
-    - [ ] `add_conditional_edges("grade_generation", route_grounding)` to route to `END` or loop back for regeneration.
-  - [ ] Compile the graph using a checkpointer: `graph.compile(checkpointer=MemorySaver())`.
-
-### Phase 5: FastAPI Router & Tests
-- [ ] Write `backend/app/routers/chat.py`:
-  - [ ] Mount `/chat` endpoint parsing incoming prompts and session-ids (`thread_id`).
-  - [ ] Invoke compiled graph using `graph.ainvoke({"messages": [HumanMessage(content=prompt)]}, {"configurable": {"thread_id": thread_id}})` and return state.
-- [ ] Write local unit tests in `backend/tests/` to mock Bedrock API calls and assert correct node routing execution.
-
-### Phase 6: App Runner Infrastructure (Terraform)
-- [ ] Implement `terraform/apprunner.tf`:
-  - [ ] Define the `aws_apprunner_service` resource.
-  - [ ] Configure it to deploy the Docker container built from the FastAPI source.
-  - [ ] Declare the `aws_apprunner_vpc_connector` mapping it to the private subnet IDs to allow secure RDS access.
-  - [ ] Author custom IAM roles granting Bedrock invoke model permissions and CloudWatch logging.

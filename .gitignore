@@ -79,3 +79,7 @@ aws_creds
 *.tfstate.backup
 .terraform.lock.hcl
 crash.log
+
+# Terraform secret files
+*.tfvars
+*.tfvars.json

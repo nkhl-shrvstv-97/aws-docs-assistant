@@ -27,3 +27,16 @@ variable "db_username" {
   type        = string
   default     = "postgres"
 }
+
+variable "langsmith_api_key" {
+  description = "LangSmith tracing API Key"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "langsmith_project" {
+  description = "LangSmith project name"
+  type        = string
+  default     = "aws-docs-assistant"
+}

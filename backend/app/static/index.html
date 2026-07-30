@@ -448,6 +448,10 @@
 
             const data = await response.json();
             
+            if (!response.ok) {
+                throw new Error(data.detail || 'Error communicating with assistant backend.');
+            }
+
             // Remove loading bubble
             document.getElementById(loadingId).remove();
 
@@ -456,7 +460,11 @@
 
         } catch (error) {
             console.error(error);
-            document.getElementById(loadingId).innerText = 'Error communicating with assistant backend.';
+            const loadingBubble = document.getElementById(loadingId);
+            if (loadingBubble) {
+                loadingBubble.innerText = error.message;
+                loadingBubble.className = 'message message-assistant';
+            }
         }
     }
 

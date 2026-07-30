@@ -7,9 +7,25 @@ from backend.app.agents.nodes.classify import classify_domain
 from backend.app.agents.graph import route_domain, route_history, route_search
 
 def test_refuse_node():
-    state: AgentState = {"messages": [HumanMessage(content="Hello")]}
+    # Out of scope query
+    state: AgentState = {"messages": [HumanMessage(content="Hello")], "classification": "out_of_scope"}
     res = refuse_out_of_scope(state)
     assert "I am an AI assistant dedicated to helping with AWS Documentation" in res["generation"]
+
+    # Greeting pleasantry
+    state_greeting: AgentState = {"messages": [HumanMessage(content="Hi there!")], "classification": "conversational"}
+    res_greet = refuse_out_of_scope(state_greeting)
+    assert "Hello! How can I help you with AWS today?" in res_greet["generation"]
+
+    # Thank you pleasantry
+    state_thanks: AgentState = {"messages": [HumanMessage(content="thank you very much")], "classification": "conversational"}
+    res_thanks = refuse_out_of_scope(state_thanks)
+    assert "You're welcome! Let me know if you have any questions about AWS." in res_thanks["generation"]
+
+    # Goodbye pleasantry
+    state_bye: AgentState = {"messages": [HumanMessage(content="Goodbye for now")], "classification": "conversational"}
+    res_bye = refuse_out_of_scope(state_bye)
+    assert "Goodbye! Feel free to reach out" in res_bye["generation"]
 
 def test_route_domain():
     state_aws: AgentState = {"is_aws_related": True}
