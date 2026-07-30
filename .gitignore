@@ -83,3 +83,9 @@ crash.log
 # Terraform secret files
 *.tfvars
 *.tfvars.json
+
+# Terraform lambda build artifacts and layer dependencies
+terraform/lambda_layer/
+terraform/lambda_layer.zip
+terraform/lambda_function.zip
+
