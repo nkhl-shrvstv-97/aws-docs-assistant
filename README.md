@@ -4,7 +4,7 @@ An enterprise-ready Agentic Chatbot designed to interact with official AWS Docum
 
 This repository demonstrates production-quality software engineering, clean architecture, and modern agentic AI practices for a technical assessment. It is fully deployable to AWS via Terraform Infrastructure as Code (IaC).
 
-Live Deployed UI URL: [INSERT_DEPLOYED_UI_URL_HERE](https://dcmas3hbqm.us-east-1.awsapprunner.com/)
+Live Deployed UI URL: [Deployed UI](https://dcmas3hbqm.us-east-1.awsapprunner.com/)
 
 ---
 
