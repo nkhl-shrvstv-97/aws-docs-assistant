@@ -1,14 +1,206 @@
 [
   {
-    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-bucket.html",
-    "service": "AmazonS3"
-  },
-  {
     "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html",
     "service": "AmazonS3"
   },
   {
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-buckets.html",
+    "service": "AmazonS3"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-overview.html",
+    "service": "AmazonS3"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-arn-format.html",
+    "service": "AmazonS3"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingEncryption.html",
+    "service": "AmazonS3"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-policies.html",
+    "service": "AmazonS3"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-points.html",
+    "service": "AmazonS3"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html",
+    "service": "AmazonS3"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle.html",
+    "service": "AmazonS3"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html",
+    "service": "AmazonS3"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html",
+    "service": "AmazonDynamoDB"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.html",
+    "service": "AmazonDynamoDB"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html",
+    "service": "AmazonDynamoDB"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Partitions.html",
+    "service": "AmazonDynamoDB"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html",
+    "service": "AmazonDynamoDB"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithTables.html",
+    "service": "AmazonDynamoDB"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithItems.html",
+    "service": "AmazonDynamoDB"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html",
+    "service": "AmazonDynamoDB"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Scan.html",
+    "service": "AmazonDynamoDB"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SecondaryIndexes.html",
+    "service": "AmazonDynamoDB"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html",
+    "service": "AmazonDynamoDB"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html",
+    "service": "AWSLambda"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-introduction-function.html",
+    "service": "AWSLambda"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html",
+    "service": "AWSLambda"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html",
+    "service": "AWSLambda"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-permissions.html",
+    "service": "AWSLambda"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-concepts.html",
+    "service": "AWSLambda"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/lambda/latest/dg/invocation-scaling.html",
+    "service": "AWSLambda"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-services.html",
+    "service": "AWSLambda"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/lambda/latest/dg/urls-tutorial.html",
+    "service": "AWSLambda"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-edge.html",
+    "service": "AWSLambda"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html",
+    "service": "AWSVPC"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/vpc/latest/userguide/how-it-works.html",
+    "service": "AWSVPC"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html",
+    "service": "AWSVPC"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html",
+    "service": "AWSVPC"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html",
+    "service": "AWSVPC"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html",
+    "service": "AWSVPC"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html",
+    "service": "AWSVPC"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-peering.html",
+    "service": "AWSVPC"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/vpc/latest/userguide/endpoint-service.html",
+    "service": "AWSVPC"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/vpc/latest/userguide/amazon-vpc-limits.html",
+    "service": "AWSVPC"
+  },
+  {
     "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html",
+    "service": "AmazonEC2"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html",
+    "service": "AmazonEC2"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html",
+    "service": "AmazonEC2"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html",
+    "service": "AmazonEC2"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html",
+    "service": "AmazonEC2"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volumes.html",
+    "service": "AmazonEC2"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html",
+    "service": "AmazonEC2"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html",
+    "service": "AmazonEC2"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html",
+    "service": "AmazonEC2"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security-groups.html",
     "service": "AmazonEC2"
   },
   {
@@ -16,7 +208,319 @@
     "service": "AmazonRDS"
   },
   {
+    "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.html",
+    "service": "AmazonRDS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CreateDBInstance.html",
+    "service": "AmazonRDS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.DBInstance.html",
+    "service": "AmazonRDS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ConnectToInstance.html",
+    "service": "AmazonRDS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.html",
+    "service": "AmazonRDS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Storage.html",
+    "service": "AmazonRDS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ModifyInstance.html",
+    "service": "AmazonRDS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DeleteInstance.html",
+    "service": "AmazonRDS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html",
+    "service": "AmazonRDS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html",
+    "service": "AWSEventBridge"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-get-started.html",
+    "service": "AWSEventBridge"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-rules.html",
+    "service": "AWSEventBridge"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-events.html",
+    "service": "AWSEventBridge"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-targets.html",
+    "service": "AWSEventBridge"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-bus.html",
+    "service": "AWSEventBridge"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-pipes.html",
+    "service": "AWSEventBridge"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-scheduler.html",
+    "service": "AWSEventBridge"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-schema.html",
+    "service": "AWSEventBridge"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-monitoring.html",
+    "service": "AWSEventBridge"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html",
+    "service": "AWSStepFunctions"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/step-functions/latest/dg/getting-started-concepts.html",
+    "service": "AWSStepFunctions"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/step-functions/latest/dg/concepts-state-machine-structure.html",
+    "service": "AWSStepFunctions"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-states.html",
+    "service": "AWSStepFunctions"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/step-functions/latest/dg/concepts-transitions.html",
+    "service": "AWSStepFunctions"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/step-functions/latest/dg/concepts-input-output-filtering.html",
+    "service": "AWSStepFunctions"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html",
+    "service": "AWSStepFunctions"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html",
+    "service": "AWSStepFunctions"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/step-functions/latest/dg/concepts-express-workflows.html",
+    "service": "AWSStepFunctions"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/step-functions/latest/dg/monitoring-state-machines.html",
+    "service": "AWSStepFunctions"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html",
+    "service": "AWSIAM"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-started.html",
+    "service": "AWSIAM"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users.html",
+    "service": "AWSIAM"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups.html",
+    "service": "AWSIAM"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+    "service": "AWSIAM"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html",
+    "service": "AWSIAM"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html",
+    "service": "AWSIAM"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_grammar.html",
+    "service": "AWSIAM"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials.html",
+    "service": "AWSIAM"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers.html",
+    "service": "AWSIAM"
+  },
+  {
     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html",
     "service": "AmazonBedrock"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started.html",
+    "service": "AmazonBedrock"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html",
+    "service": "AmazonBedrock"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/playgrounds.html",
+    "service": "AmazonBedrock"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html",
+    "service": "AmazonBedrock"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html",
+    "service": "AmazonBedrock"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/agents.html",
+    "service": "AmazonBedrock"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html",
+    "service": "AmazonBedrock"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/fine-tuning.html",
+    "service": "AmazonBedrock"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring-bedrock.html",
+    "service": "AmazonBedrock"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html",
+    "service": "AmazonECS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html",
+    "service": "AmazonECS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html",
+    "service": "AmazonECS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-fargate.html",
+    "service": "AmazonECS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/clusters.html",
+    "service": "AmazonECS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_services.html",
+    "service": "AmazonECS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/scheduling_tasks.html",
+    "service": "AmazonECS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-load-balancing.html",
+    "service": "AmazonECS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html",
+    "service": "AmazonECS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/security.html",
+    "service": "AmazonECS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html",
+    "service": "AmazonCloudWatch"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/GettingStarted.html",
+    "service": "AmazonCloudWatch"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html",
+    "service": "AmazonCloudWatch"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html",
+    "service": "AmazonCloudWatch"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html",
+    "service": "AmazonCloudWatch"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/viewing_metrics_with_cloudwatch.html",
+    "service": "AmazonCloudWatch"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Dashboards.html",
+    "service": "AmazonCloudWatch"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html",
+    "service": "AmazonCloudWatch"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent.html",
+    "service": "AmazonCloudWatch"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights.html",
+    "service": "AmazonCloudWatch"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html",
+    "service": "AmazonEKS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html",
+    "service": "AmazonEKS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eks/latest/userguide/clusters.html",
+    "service": "AmazonEKS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eks/latest/userguide/node-groups.html",
+    "service": "AmazonEKS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eks/latest/userguide/fargate.html",
+    "service": "AmazonEKS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html",
+    "service": "AmazonEKS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html",
+    "service": "AmazonEKS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html",
+    "service": "AmazonEKS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",
+    "service": "AmazonEKS"
+  },
+  {
+    "url": "https://docs.aws.amazon.com/eks/latest/userguide/security.html",
+    "service": "AmazonEKS"
   }
 ]
